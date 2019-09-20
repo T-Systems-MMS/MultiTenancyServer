@@ -5,6 +5,7 @@
 		<Version>1.2.1</Version>
 		<Description>MultiTenancyServer stores library.</Description>
 		<PackageTags>multitenancy multi-tenancy multitenant multi-tenant tenants tenant company client customer division partition stores store inmemory in-memory</PackageTags>
+		<PackageId>Mms.MultiTenancyServer.Stores</PackageId>
 	</PropertyGroup>
 
 	<ItemGroup>
