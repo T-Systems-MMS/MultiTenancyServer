@@ -4,6 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using MultiTenancyServer.Models;
 
 namespace MultiTenancyServer.Stores
 {
@@ -11,7 +12,10 @@ namespace MultiTenancyServer.Stores
     /// Provides an abstraction for a store which manages tenant accounts.
     /// </summary>
     /// <typeparam name="TTenant">The type encapsulating a tenant.</typeparam>
-    public interface ITenantStore<TTenant> : IDisposable where TTenant : class
+    /// <typeparam name="TKey">The type of the primary key for a tenant.</typeparam>
+    public interface ITenantStore<TTenant, TKey> : IDisposable
+        where TTenant : ITenanted<TKey>
+        where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// Gets the tenant identifier for the specified <paramref name="tenant"/>.
@@ -33,7 +37,7 @@ namespace MultiTenancyServer.Stores
         /// Sets the given <paramref name="canonicalName" /> for the specified <paramref name="tenant"/>.
         /// </summary>
         /// <param name="tenant">The tenant whose canonical name should be set.</param>
-        /// <param name="tenantName">The tenant name to set.</param>
+        /// <param name="canonicalName">The canonicalName to set.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
         Task SetCanonicalNameAsync(TTenant tenant, string canonicalName, CancellationToken cancellationToken = default);

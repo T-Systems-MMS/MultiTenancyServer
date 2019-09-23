@@ -16,14 +16,14 @@ namespace MultiTenancyServer.Stores.InMemory
     /// </summary>
     /// <typeparam name="TTenant">The type representing a tenant.</typeparam>
     /// <typeparam name="TKey">The type of the primary key for a tenant.</typeparam>
-    public class InMemoryTenantStore<TTenant, TKey> : TenantStoreBase<TTenant, TKey>,
-        IQueryableTenantStore<TTenant>
+    public class InMemoryTenantStore<TTenant, TKey> : TenantStoreBase<TTenant, TKey>, IQueryableTenantStore<TTenant, TKey>
         where TTenant : TenancyTenant<TKey>
         where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// Creates a new instance.
         /// </summary>
+        /// <param name="tenants">List of tenants</param>
         /// <param name="describer">The <see cref="TenancyErrorDescriber"/> used to describe store errors.</param>
         public InMemoryTenantStore(IEnumerable<TTenant> tenants, TenancyErrorDescriber describer, ILogger<InMemoryTenantStore<TTenant, TKey>> logger)
           : base(describer, logger)
@@ -31,15 +31,12 @@ namespace MultiTenancyServer.Stores.InMemory
             _tenants.AddRange(tenants ?? throw new ArgumentNullException(nameof(tenants)));
         }
 
-        private List<TTenant> _tenants = new List<TTenant>();
+        private readonly List<TTenant> _tenants = new List<TTenant>();
 
         /// <summary>
         /// A navigation property for the tenants the store contains.
         /// </summary>
-        public override IQueryable<TTenant> Tenants
-        {
-            get { return _tenants.AsQueryable(); }
-        }
+        public override IQueryable<TTenant> Tenants => _tenants.AsQueryable();
 
         /// <summary>
         /// Creates the specified <paramref name="tenant"/> in the tenant store.
@@ -53,7 +50,7 @@ namespace MultiTenancyServer.Stores.InMemory
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
             _tenants.Add(tenant);
-            Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.Id)}}}' created.", tenant.Id);
+            Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.TenantId)}}}' created.", tenant.TenantId);
             return Task.FromResult(TenancyResult.Success);
         }
 
@@ -68,7 +65,7 @@ namespace MultiTenancyServer.Stores.InMemory
             ArgCheck.NotNull(nameof(tenant), tenant);
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.Id)}}}' updated.", tenant.Id);
+            Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.TenantId)}}}' updated.", tenant.TenantId);
             return Task.FromResult(TenancyResult.Success);
         }
 
@@ -84,7 +81,7 @@ namespace MultiTenancyServer.Stores.InMemory
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
             _tenants.Remove(tenant);
-            Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.Id)}}}' deleted.", tenant.Id);
+            Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.TenantId)}}}' deleted.", tenant.TenantId);
             return Task.FromResult(TenancyResult.Success);
         }
 
@@ -103,9 +100,9 @@ namespace MultiTenancyServer.Stores.InMemory
             ThrowIfDisposed();
             var tenant = await FindTenantAsync(ConvertIdFromString(tenantId), cancellationToken);
             if (tenant == null)
-                Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.Id)}}}' not found.", tenantId);
+                Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.TenantId)}}}' not found.", tenantId);
             else
-                Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.Id)}}}' found.", tenantId);
+                Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.TenantId)}}}' found.", tenantId);
             return tenant;
         }
 
@@ -140,7 +137,7 @@ namespace MultiTenancyServer.Stores.InMemory
         {
             if (tenantId == null)
                 return null;
-            return Task.FromResult(_tenants.SingleOrDefault(t => t.Id.Equals(tenantId)));
+            return Task.FromResult(_tenants.SingleOrDefault(t => t.TenantId.Equals(tenantId)));
         }
     }
 }

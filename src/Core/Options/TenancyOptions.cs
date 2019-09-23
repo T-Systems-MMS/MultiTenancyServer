@@ -10,12 +10,12 @@ namespace MultiTenancyServer.Options
     public class TenancyOptions
     {
         /// <summary>
-        /// Gets or sets the <see cref="TenantOptions"/> for the multi-tenancy system.
+        /// Gets or sets the <see cref="TenantBaseOptions"/> for the multi-tenancy system.
         /// </summary>
         /// <value>
-        /// The <see cref="TenantOptions"/> for the multi-tenancy system.
+        /// The <see cref="TenantBaseOptions"/> for the multi-tenancy system.
         /// </value>
-        public TenantOptions Tenant { get; set; } = new TenantOptions();
+        public TenantBaseOptions Tenant { get; set; } = new TenantBaseOptions();
 
         /// <summary>
         /// Gets or sets the <see cref="TenantReferenceOptions"/> for the multi-tenancy system.

@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 using System;
+using MultiTenancyServer.Models;
 
 namespace MultiTenancyServer
 {
@@ -18,7 +19,7 @@ namespace MultiTenancyServer
         /// </remarks>
         public TenancyTenant()
         {
-            Id = Guid.NewGuid().ToString();
+            TenantId = Guid.NewGuid().ToString();
         }
 
         /// <summary>
@@ -38,7 +39,7 @@ namespace MultiTenancyServer
     /// Represents a tenant in the multi-tenancy system.
     /// </summary>
     /// <typeparam name="TKey">The type used for the primary key for the tenant.</typeparam>
-    public class TenancyTenant<TKey> where TKey : IEquatable<TKey>
+    public class TenancyTenant<TKey> : ITenanted<TKey> where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// Initializes a new instance of <see cref="TenancyTenant{TKey}"/>.
@@ -53,11 +54,6 @@ namespace MultiTenancyServer
         {
             CanonicalName = canonicalName;
         }
-
-        /// <summary>
-        /// Gets or sets the primary key for this tenant.
-        /// </summary>
-        public virtual TKey Id { get; set; }
 
         /// <summary>
         /// Gets or sets the canonical name for this tenant.
@@ -79,5 +75,8 @@ namespace MultiTenancyServer
         /// </summary>
         public override string ToString()
             => CanonicalName;
+
+        /// <inheritdoc cref="ITenanted{TKey}"/>
+        public  virtual TKey TenantId { get; set; }
     }
 }

@@ -4,13 +4,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using KodeAid;
 using KodeAid.Text.Normalization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MultiTenancyServer.Models;
 using MultiTenancyServer.Options;
 using MultiTenancyServer.Services;
 using MultiTenancyServer.Stores;
@@ -21,11 +21,12 @@ namespace MultiTenancyServer
     /// Provides the APIs for managing tenants in a persistence store.
     /// </summary>
     /// <typeparam name="TTenant">The type encapsulating a tenant.</typeparam>
-    public class TenantManager<TTenant> : IDisposable where TTenant : class
+    /// <typeparam name="TKey">The type of the primary key for a tenant.</typeparam>
+    public class TenantManager<TTenant, TKey> : IDisposable
+        where TTenant : ITenanted<TKey>
+        where TKey : IEquatable<TKey>
     {
         private bool _disposed;
-        private static readonly RandomNumberGenerator _rng = RandomNumberGenerator.Create();
-        private readonly IServiceProvider _services;
 
         /// <summary>
         /// The cancellation token used to cancel operations.
@@ -33,22 +34,20 @@ namespace MultiTenancyServer
         protected virtual CancellationToken CancellationToken => CancellationToken.None;
 
         /// <summary>
-        /// Constructs a new instance of <see cref="TenantManager{TTenant}"/>.
+        /// Constructs a new instance of <see cref="TenantManager{TTenant, TKey}"/>.
         /// </summary>
         /// <param name="store">The persistence store the manager will operate over.</param>
         /// <param name="optionsAccessor">The accessor used to access the <see cref="TenancyOptions"/>.</param>
-        /// <param name="tenantValidators">A collection of <see cref="ITenantValidator{TTenant}"/> to validate tenants against.</param>
+        /// <param name="tenantValidators">A collection of <see cref="ITenantValidator{TTenant, TKey}"/> to validate tenants against.</param>
         /// <param name="keyNormalizer">The <see cref="ILookupNormalizer"/> to use when generating index keys for tenants.</param>
         /// <param name="errors">The <see cref="TenancyErrorDescriber"/> used to provider error messages.</param>
-        /// <param name="services">The <see cref="IServiceProvider"/> used to resolve services.</param>
         /// <param name="logger">The logger used to log messages, warnings and errors.</param>
-        public TenantManager(ITenantStore<TTenant> store,
+        public TenantManager(ITenantStore<TTenant, TKey> store,
             IOptions<TenancyOptions> optionsAccessor,
-            IEnumerable<ITenantValidator<TTenant>> tenantValidators,
+            IEnumerable<ITenantValidator<TTenant, TKey>> tenantValidators,
             ILookupNormalizer keyNormalizer,
             TenancyErrorDescriber errors,
-            IServiceProvider services,
-            ILogger<TenantManager<TTenant>> logger)
+            ILogger<TenantManager<TTenant, TKey>> logger)
         {
             ArgCheck.NotNull(nameof(store), store);
             Store = store;
@@ -64,15 +63,13 @@ namespace MultiTenancyServer
                     TenantValidators.Add(v);
                 }
             }
-
-            _services = services;
         }
 
         /// <summary>
         /// Gets or sets the persistence store the manager operates over.
         /// </summary>
         /// <value>The persistence store the manager operates over.</value>
-        protected internal ITenantStore<TTenant> Store { get; set; }
+        protected internal ITenantStore<TTenant, TKey> Store { get; set; }
 
         /// <summary>
         /// The <see cref="ILogger"/> used to log messages from the manager.
@@ -83,9 +80,9 @@ namespace MultiTenancyServer
         public virtual ILogger Logger { get; set; }
 
         /// <summary>
-        /// The <see cref="ITenantValidator{TTenant}"/> used to validate tenants.
+        /// The <see cref="ITenantValidator{TTenant, TKey}"/> used to validate tenants.
         /// </summary>
-        public IList<ITenantValidator<TTenant>> TenantValidators { get; } = new List<ITenantValidator<TTenant>>();
+        public IList<ITenantValidator<TTenant, TKey>> TenantValidators { get; } = new List<ITenantValidator<TTenant, TKey>>();
 
         /// <summary>
         /// The <see cref="ILookupNormalizer"/> used to normalize things like tenant and role names.
@@ -114,7 +111,7 @@ namespace MultiTenancyServer
             get
             {
                 ThrowIfDisposed();
-                return Store is IQueryableTenantStore<TTenant>;
+                return Store is IQueryableTenantStore<TTenant, TKey>;
             }
         }
 
@@ -125,7 +122,7 @@ namespace MultiTenancyServer
         {
             get
             {
-                if (!(Store is IQueryableTenantStore<TTenant> queryableStore))
+                if (!(Store is IQueryableTenantStore<TTenant, TKey> queryableStore))
                 {
                     throw new NotSupportedException(Resources.StoreNotIQueryableTenantStore);
                 }
