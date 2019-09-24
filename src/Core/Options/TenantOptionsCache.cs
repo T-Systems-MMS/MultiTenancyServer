@@ -28,24 +28,24 @@
 
         public void Clear()
         {
-            _tenantSpecificOptionsCache.Get(_tenantAccessor.Tenant.TenantId).Clear();
+            _tenantSpecificOptionsCache.Get(_tenantAccessor.Tenant.Id).Clear();
         }
 
         public TOptions GetOrAdd(string name, Func<TOptions> createOptions)
         {
-            return _tenantSpecificOptionsCache.Get(_tenantAccessor.Tenant.TenantId)
+            return _tenantSpecificOptionsCache.Get(_tenantAccessor.Tenant.Id)
                 .GetOrAdd(name, createOptions);
         }
 
         public bool TryAdd(string name, TOptions options)
         {
-            return _tenantSpecificOptionsCache.Get(_tenantAccessor.Tenant.TenantId)
+            return _tenantSpecificOptionsCache.Get(_tenantAccessor.Tenant.Id)
                 .TryAdd(name, options);
         }
 
         public bool TryRemove(string name)
         {
-            return _tenantSpecificOptionsCache.Get(_tenantAccessor.Tenant.TenantId)
+            return _tenantSpecificOptionsCache.Get(_tenantAccessor.Tenant.Id)
                 .TryRemove(name);
         }
     }

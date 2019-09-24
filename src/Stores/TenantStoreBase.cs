@@ -71,7 +71,7 @@ namespace MultiTenancyServer.Stores
             {
                 throw new ArgumentNullException(nameof(tenant));
             }
-            return Task.FromResult(ConvertIdToString(tenant.TenantId));
+            return Task.FromResult(ConvertIdToString(tenant.Id));
         }
 
         /// <summary>

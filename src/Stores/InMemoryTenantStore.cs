@@ -50,7 +50,7 @@ namespace MultiTenancyServer.Stores.InMemory
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
             _tenants.Add(tenant);
-            Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.TenantId)}}}' created.", tenant.TenantId);
+            Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.Id)}}}' created.", tenant.Id);
             return Task.FromResult(TenancyResult.Success);
         }
 
@@ -65,7 +65,7 @@ namespace MultiTenancyServer.Stores.InMemory
             ArgCheck.NotNull(nameof(tenant), tenant);
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.TenantId)}}}' updated.", tenant.TenantId);
+            Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.Id)}}}' updated.", tenant.Id);
             return Task.FromResult(TenancyResult.Success);
         }
 
@@ -81,7 +81,7 @@ namespace MultiTenancyServer.Stores.InMemory
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
             _tenants.Remove(tenant);
-            Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.TenantId)}}}' deleted.", tenant.TenantId);
+            Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.Id)}}}' deleted.", tenant.Id);
             return Task.FromResult(TenancyResult.Success);
         }
 
@@ -100,9 +100,9 @@ namespace MultiTenancyServer.Stores.InMemory
             ThrowIfDisposed();
             var tenant = await FindTenantAsync(ConvertIdFromString(tenantId), cancellationToken);
             if (tenant == null)
-                Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.TenantId)}}}' not found.", tenantId);
+                Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.Id)}}}' not found.", tenantId);
             else
-                Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.TenantId)}}}' found.", tenantId);
+                Logger.LogDebug($"Tenant ID '{{{nameof(TenancyTenant.Id)}}}' found.", tenantId);
             return tenant;
         }
 
@@ -137,7 +137,7 @@ namespace MultiTenancyServer.Stores.InMemory
         {
             if (tenantId == null)
                 return null;
-            return Task.FromResult(_tenants.SingleOrDefault(t => t.TenantId.Equals(tenantId)));
+            return Task.FromResult(_tenants.SingleOrDefault(t => t.Id.Equals(tenantId)));
         }
     }
 }

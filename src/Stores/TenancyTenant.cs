@@ -17,10 +17,7 @@ namespace MultiTenancyServer
         /// <remarks>
         /// The Id property is initialized to form a new GUID string value.
         /// </remarks>
-        public TenancyTenant()
-        {
-            TenantId = Guid.NewGuid().ToString();
-        }
+        public TenancyTenant() : base(Guid.NewGuid().ToString()) { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="TenancyTenant"/>.
@@ -29,9 +26,8 @@ namespace MultiTenancyServer
         /// <remarks>
         /// The Id property is initialized to form a new GUID string value.
         /// </remarks>
-        public TenancyTenant(string canonicalName) : this()
+        public TenancyTenant(string canonicalName) : base(Guid.NewGuid().ToString(), canonicalName)
         {
-            CanonicalName = canonicalName;
         }
     }
 
@@ -44,15 +40,20 @@ namespace MultiTenancyServer
         /// <summary>
         /// Initializes a new instance of <see cref="TenancyTenant{TKey}"/>.
         /// </summary>
-        public TenancyTenant() { }
+        /// <param name="id">Id of Tenanat</param>
+        public TenancyTenant(TKey id)
+        {
+            this.Id = id;
+        }
 
         /// <summary>
         /// Initializes a new instance of <see cref="TenancyTenant{TKey}"/>.
         /// </summary>
+        /// <param name="id">Id of Tenanat</param>
         /// <param name="canonicalName">The canonical name.</param>
-        public TenancyTenant(string canonicalName) : this()
+        public TenancyTenant(TKey id, string canonicalName) : this(id)
         {
-            CanonicalName = canonicalName;
+            this.CanonicalName = canonicalName;
         }
 
         /// <summary>
@@ -77,6 +78,6 @@ namespace MultiTenancyServer
             => CanonicalName;
 
         /// <inheritdoc cref="ITenanted{TKey}"/>
-        public  virtual TKey TenantId { get; set; }
+        public TKey Id { get; set; }
     }
 }
