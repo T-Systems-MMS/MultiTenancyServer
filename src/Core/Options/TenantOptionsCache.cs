@@ -15,11 +15,9 @@
         where TTenant : ITenanted<TKey>
         where TKey : IEquatable<TKey>
     {
-
         private readonly ITenancyContext<TTenant, TKey> _tenantAccessor;
 
-        private readonly TenantOptionsCacheDictionary<TOptions, TKey> _tenantSpecificOptionsCache =
-            new TenantOptionsCacheDictionary<TOptions, TKey>();
+        private readonly TenantOptionsCacheDictionary<TOptions, TKey> _tenantSpecificOptionsCache = new TenantOptionsCacheDictionary<TOptions, TKey>();
 
         public TenantOptionsCache(ITenancyContext<TTenant, TKey> tenantAccessor)
         {

@@ -11,7 +11,7 @@ namespace MultiTenancyServer.Options
     /// <typeparam name="TOptions"></typeparam>
     /// <typeparam name="TTenant"></typeparam>
     /// <typeparam name="TKey"></typeparam>
-    internal class TenantOptionsFactory<TOptions, TTenant, TKey> : IOptionsFactory<TOptions>
+    public class TenantOptionsFactory<TOptions, TTenant, TKey> : IOptionsFactory<TOptions>
         where TOptions : class, new()
         where TTenant : ITenanted<TKey>
         where TKey : IEquatable<TKey>
