@@ -356,3 +356,8 @@ WHERE **(@___tenantId_0 IS NOT NULL AND ([u].[TenantId] = @___tenantId_0))** AND
 SELECT [p].[Key], [p].[ClientId], [p].[CreationTime], [p].[Data], [p].[Expiration], [p].[SubjectId], [p].[TenantId], [p].[Type]
 FROM [PersistedGrants] AS [p]
 WHERE **(@___tenantId_0 IS NOT NULL AND ([p].[TenantId] = @___tenantId_0))** AND ([p].[SubjectId] = @__subjectId_0)
+
+## Other notes
+
+### Added Options Pattern
+Optionspattern based on [blog series](https://michael-mckenna.com/multi-tenant-asp-dot-net-core-application-tenant-specific-configuration-options) by [@myquay](https://github.com/myquay).
