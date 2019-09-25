@@ -17,7 +17,7 @@ namespace MultiTenancyServer.Configuration.DependencyInjection
     /// <typeparam name="TTenant">The type representing a tenant.</typeparam>
     /// <typeparam name="TKey">The type of the primary key for a tenant.</typeparam>
     public class TenancyBuilder<TTenant, TKey>
-        where TTenant : ITenanted<TKey>
+        where TTenant : class, ITenanted<TKey>
         where TKey : IEquatable<TKey>
     {
         /// <summary>
@@ -186,7 +186,7 @@ namespace MultiTenancyServer.Configuration.DependencyInjection
         /// </summary>
         /// <typeparam name="TOptions">Type of options we are apply configuration to</typeparam>
         /// <param name="tenantConfig">Action to configure options for a tenant</param>
-        /// <returns></returns>
+        /// <returns>The current <see cref="TenancyBuilder{TTenant, TKey}"/> instance.</returns>
         public virtual TenancyBuilder<TTenant, TKey> WithPerTenantOptions<TOptions>(Action<TOptions, TTenant> tenantConfig) where TOptions : class, new()
         {
             //Register the multi-tenant cache

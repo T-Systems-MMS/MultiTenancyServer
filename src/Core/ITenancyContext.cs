@@ -13,7 +13,7 @@ namespace MultiTenancyServer
     /// <typeparam name="TTenant">The type encapsulating a tenant.</typeparam>
     /// <typeparam name="TKey">Key of TenantId</typeparam>
     public interface ITenancyContext<TTenant, TKey> 
-        where TTenant : ITenanted<TKey>
+        where TTenant : class, ITenanted<TKey>
         where TKey : IEquatable<TKey>
     {
         /// <summary>

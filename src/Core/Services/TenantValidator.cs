@@ -16,7 +16,7 @@ namespace MultiTenancyServer.Services
     /// <typeparam name="TTenant">The type encapsulating a tenant.</typeparam>
     /// <typeparam name="TKey">The type of the primary key for a tenant.</typeparam>
     public class TenantValidator<TTenant, TKey> : ITenantValidator<TTenant, TKey>
-        where TTenant : ITenanted<TKey>
+        where TTenant : class, ITenanted<TKey>
         where TKey : IEquatable<TKey>
     {
         /// <summary>
@@ -56,8 +56,8 @@ namespace MultiTenancyServer.Services
             {
                 errors.Add(Describer.InvalidCanonicalName(canonicalName));
             }
-            else if (!string.IsNullOrEmpty(manager.Options.Tenant.AllowedCanonicalNameCharacters) &&
-                canonicalName.Any(c => !manager.Options.Tenant.AllowedCanonicalNameCharacters.Contains(c)))
+            else if (!string.IsNullOrEmpty(manager.Options.Validation.AllowedCanonicalNameCharacters) &&
+                canonicalName.Any(c => !manager.Options.Validation.AllowedCanonicalNameCharacters.Contains(c)))
             {
                 errors.Add(Describer.InvalidCanonicalName(canonicalName));
             }

@@ -26,7 +26,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services">The services available in the application.</param>
         /// <returns>An <see cref="TenancyBuilder{TTenant, TKey}"/> for creating and configuring the multi-tenancy system.</returns>
         public static TenancyBuilder<TTenant, TKey> AddMultiTenancyCore<TTenant, TKey>(this IServiceCollection services)
-            where TTenant : ITenanted<TKey>
+            where TTenant : class, ITenanted<TKey>
             where TKey : IEquatable<TKey>
         => services.AddMultiTenancyCore<TTenant, TKey>(o => { });
 
@@ -39,7 +39,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="setup">An action to configure the <see cref="TenancyOptions"/>.</param>
         /// <returns>An <see cref="TenancyBuilder{TTenant, TKey}"/> for creating and configuring the multi-tenancy system.</returns>
         public static TenancyBuilder<TTenant, TKey> AddMultiTenancyCore<TTenant, TKey>(this IServiceCollection services, Action<TenancyOptions> setup)
-            where TTenant : ITenanted<TKey>
+            where TTenant : class, ITenanted<TKey>
             where TKey : IEquatable<TKey>
         {
             // Services tenancy depends on
@@ -48,6 +48,7 @@ namespace Microsoft.Extensions.DependencyInjection
             // Services used by tenancy
             services.TryAddScoped<ILookupNormalizer, UpperInvariantLookupNormalizer>();
             services.TryAddScoped<ITenantValidator<TTenant, TKey>, TenantValidator<TTenant, TKey>>();
+            
             // No interface for the error describer so we can add errors without rev'ing the interface
             services.TryAddScoped<TenancyErrorDescriber>();
             services.TryAddScoped<TenantManager<TTenant, TKey>, TenantManager<TTenant, TKey>>();
@@ -59,7 +60,7 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<TenancyOptions>>().Value);
-            services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<TenancyOptions>>().Value?.Tenant);
+            services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<TenancyOptions>>().Value?.Validation);
             services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<TenancyOptions>>().Value?.Reference);
 
             return new TenancyBuilder<TTenant, TKey>(services);

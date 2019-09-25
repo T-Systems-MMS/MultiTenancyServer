@@ -3,7 +3,7 @@
     /// <summary>
     /// Options for tenant validation.
     /// </summary>
-    public class TenantBaseOptions
+    public class TenantValidationOptions
     {
         /// <summary>
         /// Gets or sets the list of allowed characters in the canonical name used to validate tenant canonical names.

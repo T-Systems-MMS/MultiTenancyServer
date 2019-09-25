@@ -14,7 +14,7 @@ namespace MultiTenancyServer.Stores
     /// <typeparam name="TTenant">The type encapsulating a tenant.</typeparam>
     /// <typeparam name="TKey">The type of the primary key for a tenant.</typeparam>
     public interface ITenantStore<TTenant, TKey> : IDisposable
-        where TTenant : ITenanted<TKey>
+        where TTenant : class, ITenanted<TKey>
         where TKey : IEquatable<TKey>
     {
         /// <summary>
