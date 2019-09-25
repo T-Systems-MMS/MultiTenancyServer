@@ -16,6 +16,6 @@ namespace MultiTenancyServer.Models
         /// Gets the ID of the tenant that owns this entity.
         /// </summary>
         /// <value>The ID of the tenant that owns this entity.</value>
-        TKey TenantId { get; set; }
+        TKey Id { get; set; }
     }
 }

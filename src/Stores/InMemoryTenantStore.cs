@@ -16,14 +16,14 @@ namespace MultiTenancyServer.Stores.InMemory
     /// </summary>
     /// <typeparam name="TTenant">The type representing a tenant.</typeparam>
     /// <typeparam name="TKey">The type of the primary key for a tenant.</typeparam>
-    public class InMemoryTenantStore<TTenant, TKey> : TenantStoreBase<TTenant, TKey>,
-        IQueryableTenantStore<TTenant>
+    public class InMemoryTenantStore<TTenant, TKey> : TenantStoreBase<TTenant, TKey>, IQueryableTenantStore<TTenant, TKey>
         where TTenant : TenancyTenant<TKey>
         where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// Creates a new instance.
         /// </summary>
+        /// <param name="tenants">List of tenants</param>
         /// <param name="describer">The <see cref="TenancyErrorDescriber"/> used to describe store errors.</param>
         public InMemoryTenantStore(IEnumerable<TTenant> tenants, TenancyErrorDescriber describer, ILogger<InMemoryTenantStore<TTenant, TKey>> logger)
           : base(describer, logger)
@@ -31,15 +31,12 @@ namespace MultiTenancyServer.Stores.InMemory
             _tenants.AddRange(tenants ?? throw new ArgumentNullException(nameof(tenants)));
         }
 
-        private List<TTenant> _tenants = new List<TTenant>();
+        private readonly List<TTenant> _tenants = new List<TTenant>();
 
         /// <summary>
         /// A navigation property for the tenants the store contains.
         /// </summary>
-        public override IQueryable<TTenant> Tenants
-        {
-            get { return _tenants.AsQueryable(); }
-        }
+        public override IQueryable<TTenant> Tenants => _tenants.AsQueryable();
 
         /// <summary>
         /// Creates the specified <paramref name="tenant"/> in the tenant store.

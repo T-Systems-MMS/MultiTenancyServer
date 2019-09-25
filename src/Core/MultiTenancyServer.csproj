@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<Version>1.2.1</Version>
+		<VersionPrefix>1.4.0</VersionPrefix>
 		<Description>MultiTenancyServer core library.</Description>
 		<PackageTags>multitenancy multi-tenancy multitenant multi-tenant tenants tenant company client customer division partition core common</PackageTags>
+		<PackageId>Mms.MultiTenancyServer</PackageId>
 	</PropertyGroup>
 
 	<ItemGroup>

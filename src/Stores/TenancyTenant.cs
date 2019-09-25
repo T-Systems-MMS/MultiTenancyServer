@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 using System;
+using MultiTenancyServer.Models;
 
 namespace MultiTenancyServer
 {
@@ -16,10 +17,7 @@ namespace MultiTenancyServer
         /// <remarks>
         /// The Id property is initialized to form a new GUID string value.
         /// </remarks>
-        public TenancyTenant()
-        {
-            Id = Guid.NewGuid().ToString();
-        }
+        public TenancyTenant() : base(Guid.NewGuid().ToString()) { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="TenancyTenant"/>.
@@ -28,9 +26,8 @@ namespace MultiTenancyServer
         /// <remarks>
         /// The Id property is initialized to form a new GUID string value.
         /// </remarks>
-        public TenancyTenant(string canonicalName) : this()
+        public TenancyTenant(string canonicalName) : base(Guid.NewGuid().ToString(), canonicalName)
         {
-            CanonicalName = canonicalName;
         }
     }
 
@@ -38,26 +35,26 @@ namespace MultiTenancyServer
     /// Represents a tenant in the multi-tenancy system.
     /// </summary>
     /// <typeparam name="TKey">The type used for the primary key for the tenant.</typeparam>
-    public class TenancyTenant<TKey> where TKey : IEquatable<TKey>
+    public class TenancyTenant<TKey> : ITenanted<TKey> where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// Initializes a new instance of <see cref="TenancyTenant{TKey}"/>.
         /// </summary>
-        public TenancyTenant() { }
+        /// <param name="id">Id of Tenanat</param>
+        public TenancyTenant(TKey id)
+        {
+            this.Id = id;
+        }
 
         /// <summary>
         /// Initializes a new instance of <see cref="TenancyTenant{TKey}"/>.
         /// </summary>
+        /// <param name="id">Id of Tenanat</param>
         /// <param name="canonicalName">The canonical name.</param>
-        public TenancyTenant(string canonicalName) : this()
+        public TenancyTenant(TKey id, string canonicalName) : this(id)
         {
-            CanonicalName = canonicalName;
+            this.CanonicalName = canonicalName;
         }
-
-        /// <summary>
-        /// Gets or sets the primary key for this tenant.
-        /// </summary>
-        public virtual TKey Id { get; set; }
 
         /// <summary>
         /// Gets or sets the canonical name for this tenant.
@@ -79,5 +76,8 @@ namespace MultiTenancyServer
         /// </summary>
         public override string ToString()
             => CanonicalName;
+
+        /// <inheritdoc cref="ITenanted{TKey}"/>
+        public TKey Id { get; set; }
     }
 }

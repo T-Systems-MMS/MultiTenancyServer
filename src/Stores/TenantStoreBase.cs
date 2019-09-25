@@ -17,7 +17,7 @@ namespace MultiTenancyServer.Stores
     /// <typeparam name="TTenant">The type representing a tenant.</typeparam>
     /// <typeparam name="TKey">The type of the primary key for a tenant.</typeparam>
     public abstract class TenantStoreBase<TTenant, TKey> :
-        IQueryableTenantStore<TTenant>
+        IQueryableTenantStore<TTenant, TKey>
         where TTenant : TenancyTenant<TKey>
         where TKey : IEquatable<TKey>
     {
@@ -25,7 +25,8 @@ namespace MultiTenancyServer.Stores
         /// Creates a new instance.
         /// </summary>
         /// <param name="describer">The <see cref="TenancyErrorDescriber"/> used to describe store errors.</param>
-        public TenantStoreBase(TenancyErrorDescriber describer, ILogger logger)
+        /// <param name="logger">The logger.</param>
+        protected TenantStoreBase(TenancyErrorDescriber describer, ILogger logger)
         {
             ArgCheck.NotNull(nameof(describer), describer);
             ArgCheck.NotNull(nameof(logger), logger);
@@ -210,7 +211,7 @@ namespace MultiTenancyServer.Stores
         /// <returns>An <see cref="string"/> representation of the provided <paramref name="id"/>.</returns>
         public virtual string ConvertIdToString(TKey id)
         {
-            if (object.Equals(id, default(TKey)))
+            if (Equals(id, default(TKey)))
             {
                 return null;
             }
